@@ -1,0 +1,10 @@
+# Base
+Flask==3.1.0
+Flask-SQLAlchemy==3.1.1
+
+# Format
+black==25.1.0
+isort==6.0.1
+pre-commit==4.2.0
+pre-commit-hooks==5.0.0
+pylint==3.3.7
