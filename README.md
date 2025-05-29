@@ -34,3 +34,14 @@ Needed: Python 3.12+
   - `pre-commit run --all-files`
 - You can skip `pre-commit` if needed.
   - e.g., `git commit --no-verify -m "commit message"`
+
+## Workflow
+
+```mermaid
+flowchart TD
+    A[Password input + stats] --> B([Comment fonctionne un mot de passe ?]) --> C([Explications sur le chiffrage]) --> D[Tentative de crack + cluster] --> E([Résultats])
+    E --> F([Pas bien faut faire mieux])
+    E --> G([Bravo c'est très bien + diplôme])
+    F --> H([Conseils + bonbon])
+    G --> H
+```
