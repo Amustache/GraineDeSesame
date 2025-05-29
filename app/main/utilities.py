@@ -1,6 +1,6 @@
 import bcrypt
 import hashlib
-from zxcvbn import zxcvbn
+
 
 def hash_password(password: str) -> (bytes, bytes):
     password_encoded = password.encode("utf-8")
@@ -10,16 +10,18 @@ def hash_password(password: str) -> (bytes, bytes):
 
     return md5_hash, bcrypt_hash
 
+
 def check_hash(password: str, md5_hash: bytes, bcrypt_hash: bytes) -> (bool, bool):
     password_encoded = password.encode("utf-8")
     return md5_hash == hashlib.md5(password_encoded).digest(), bcrypt.checkpw(password_encoded, bcrypt_hash)
 
-md5_hash, bcrypt_hash = hash_password("TEST")
 
-print(md5_hash, bcrypt_hash)
+if __name__ == "__main__":
+    md5_hash, bcrypt_hash = hash_password("TEST")
+    print(md5_hash, bcrypt_hash)
 
-# Check False
-print(check_hash("test", md5_hash, bcrypt_hash))
+    # Check False
+    print(check_hash("test", md5_hash, bcrypt_hash))
 
-# Check True
-print(check_hash("TEST", md5_hash, bcrypt_hash))
+    # Check True
+    print(check_hash("TEST", md5_hash, bcrypt_hash))

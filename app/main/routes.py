@@ -1,5 +1,8 @@
-from flask import render_template, request, redirect, url_for
+import json
 
+from flask import render_template, request, redirect, url_for, session, current_app
+
+from app.main.utilities import hash_password
 from app.main import bp
 
 
@@ -110,6 +113,34 @@ def enter_password():
         )
     # Next page
     if request.method == "POST":
+        # weak
+        plain = request.form.get("weak")
+        md5_hash, bcrypt_hash = hash_password(plain)
+        session["weak"] = {
+            "plain": plain if current_app.config["DEBUG"] else "",
+            "md5_hash": md5_hash,
+            "bcrypt_hash": bcrypt_hash,
+            "time": json.loads(request.form.get("time_weak")),
+        }
+        # medium
+        plain = request.form.get("medium")
+        md5_hash, bcrypt_hash = hash_password(plain)
+        session["medium"] = {
+            "plain": plain if current_app.config["DEBUG"] else "",
+            "md5_hash": md5_hash,
+            "bcrypt_hash": bcrypt_hash,
+            "time": json.loads(request.form.get("time_medium")),
+        }
+        # strong
+        plain = request.form.get("strong")
+        md5_hash, bcrypt_hash = hash_password(plain)
+        session["strong"] = {
+            "plain": plain if current_app.config["DEBUG"] else "",
+            "md5_hash": md5_hash,
+            "bcrypt_hash": bcrypt_hash,
+            "time": json.loads(request.form.get("time_strong")),
+        }
+
         return redirect(url_for(next_fun))
 
     # Error
