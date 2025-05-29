@@ -10,20 +10,61 @@
 
   <!-- Bootstrap core CSS -->
   <link href="{{ url_for('static', filename='css/bootstrap.min.css') }}" rel="stylesheet">
+  <link href="{{ url_for('static', filename='css/specs.css') }}" rel="stylesheet">
 
   {% block css %}{% endblock %}
 </head>
 
 <body>
-
 <!-- Begin page content -->
-<main role="main" class="container">
-  {% block content %}{% endblock %}
+<main role="main" class="container-fluid">
+  <form method="POST">
+    <div class="row">
+      <div class="col-3">
+        <div class="image-container">
+          <img id="chara" src="{{ url_for('static', filename='img/chara/' ~ chara_pic ~ '.png') }}" alt="Chara">
+          <div id="speech">
+            {{ speech_text }}
+          </div>
+          <button type="submit" class="btn btn-primary">Continuer</button>
+        </div>
+      </div>
+      <div class="col-9">
+        {% block content %}{% endblock %}
+      </div>
+    </div>
+  </form>
 </main>
 
-{% include "includes/footer.html" %}
-
 <script src="{{ url_for('static', filename='js/bootstrap.bundle.min.js') }}"></script>
+<script src="{{ url_for('static', filename='js/jquery-3.7.1.min.js') }}"></script>
+<script>
+    var chara = $("#chara");
+    var speech = $("#speech");
+
+    chara.ready(
+        function () {
+            speech.css({
+                "animation-name": "expand-bounce",
+                "animation-duration": "0.25s"
+            });
+        }
+    );
+</script>
+<script>
+    $(function () {
+        $('body').hide().fadeIn('slow');
+
+        $('a').click(function () {
+            var link = $(this).attr('href');
+            $('body').fadeOut('slow', function () {
+                window.location.href = link;
+            });
+            return false;
+        });
+
+    });
+</script>
 {% block js %}{% endblock %}
 </body>
 </html>
