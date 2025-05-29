@@ -1,0 +1,24 @@
+import os
+
+BASEDIR = os.path.abspath(os.path.dirname(__file__))
+
+
+class Config:
+    DEBUG = True
+    SECRET_KEY = "vewwy secret key"  # Change that...
+
+    SERVER_HOST = "0.0.0.0"
+    SERVER_PORT = 8888
+    DOMAIN = "http://127.0.0.1:8888"
+
+    DB_ENGINE = "sqlite"
+    DB_USERNAME = ""
+    DB_PASSWORD = ""
+    DB_HOST = ""
+    DB_PORT = ""
+    DB_NAME = os.path.join(BASEDIR, "database.db")
+    if DB_ENGINE == "sqlite":
+        SQLALCHEMY_DATABASE_URI = f"sqlite:///{DB_NAME}"
+    else:
+        SQLALCHEMY_DATABASE_URI = f"{DB_ENGINE}://{DB_USERNAME}:{DB_PASSWORD}@{DB_HOST}:{DB_PORT}/{DB_NAME}"
+    SQLALCHEMY_TRACK_MODIFICATIONS = False

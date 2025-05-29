@@ -1,0 +1,29 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <meta name="description" content="">
+  <meta name="author" content="">
+
+  <title>MyApp - {% block title %}{% endblock %}</title>
+
+  <!-- Bootstrap core CSS -->
+  <link href="{{ url_for('static', filename='css/bootstrap.min.css') }}" rel="stylesheet">
+
+  {% block css %}{% endblock %}
+</head>
+
+<body>
+
+<!-- Begin page content -->
+<main role="main" class="container">
+  {% block content %}{% endblock %}
+</main>
+
+{% include "includes/footer.html" %}
+
+<script src="{{ url_for('static', filename='js/bootstrap.bundle.min.js') }}"></script>
+{% block js %}{% endblock %}
+</body>
+</html>
