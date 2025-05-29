@@ -94,7 +94,7 @@ def disclaimer():
 def enter_password():
     # Parameters
     current_page = "part/enter_password.html"
-    next_fun = "main.hash"
+    next_fun = "main.explanation"
     chara_pic = "draft_pointing"
     speech_text = [
         "Bien ! Commençons !",

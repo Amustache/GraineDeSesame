@@ -1,16 +1,23 @@
 :root {
-    --chara-height: 256px;
+    --chara-width: 24vw;
+    --chara-width-half: 12vw;
 }
 
 .image-container {
     position: fixed;
     bottom: 0;
-    left: 0;
+    left: 1vw;
+}
+
+.buttons-fixed {
+    position: fixed;
+    bottom: 0;
 }
 
 .image-container img {
-    max-width: var(--chara-height);
-    height: auto;
+    /*height: var(--chara-width);*/
+    /*max-width: auto;*/
+    width: var(--chara-width);
 }
 
 .speech {
@@ -20,10 +27,11 @@
     background-color: #008DD4;
     color: white;
     border-radius: 10px;
-    width: 256px;
+    /*width: 256px;*/
     padding: 10px;
-    left: 110px;
-    bottom: var(--chara-height);
+    left: 1vw;
+    right: 1vw;
+    /*bottom: var(--chara-width);*/
     transform: scale(0);
     animation-fill-mode: forwards;
 }
@@ -34,7 +42,7 @@
     width: 0;
     position: absolute;
     bottom: -25px;
-    left: 5px;
+    left: var(--chara-width-half);
     border-style: solid;
     border-width: 15px;
     border-color: #008DD4 transparent transparent #008DD4;

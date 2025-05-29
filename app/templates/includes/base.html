@@ -23,8 +23,8 @@
       <div id="chara-space" class="col-3">
         <div class="image-container">
           <img id="chara" src="{{ url_for('static', filename='img/chara/' ~ chara_pic ~ '.png') }}" alt="Chara">
-          {% for speech in speech_text[::-1] %}
-            <div id="speech-{{ loop.index }}" class="speech {% if loop.first %}speech-last{% endif %}">
+          {% for speech in speech_text %}
+            <div id="speech-{{ loop.index }}" class="speech {% if loop.last %}speech-last{% endif %}">
               {{ speech|safe }}
             </div>
           {% endfor %}
@@ -32,10 +32,12 @@
       </div>
       <div id="actual-content" class="col-9">
         {% block content %}{% endblock %}
-        <div class=" float-end mt-5 me-5">
-          <a class="btn btn-secondary" href="{{ url_for('main.entry') }}">Retour au début</a>
-          <button type="submit" class="btn btn-primary btn-lg">Continuer</button>
-        </div>
+        <a class="btn btn-secondary btn-lg float-start mt-5 me-5" href="{{ url_for('main.entry') }}">
+          Retour au début
+        </a>
+        <button type="submit" class="btn btn-primary btn-lg float-end mt-5 me-5">
+          Continuer
+        </button>
       </div>
     </div>
   </form>
@@ -44,24 +46,40 @@
 <script src="{{ url_for('static', filename='js/bootstrap.bundle.min.js') }}"></script>
 <script src="{{ url_for('static', filename='js/jquery-3.7.1.min.js') }}"></script>
 <script>
+    $(window).on("load", function () {
+        const chara = $("#chara");
+        let cur_bottom = chara.height();
 
-    $(window).on("load",
-        function () {
-            const chara = $("#chara");
-            const speech = $(".speech");
-            let cur_bottom = chara.height();
+        $(".speech").each(function (index) {
+            const element = $(this);
 
-            speech.each(function (index) {
-                $(this)
-                    .css({
+            element
+                .delay(500 * index) // Délai de 500ms multiplié par l'index
+                .queue(function (next) {
+                    // Appliquer l'animation pour le message actuel
+                    element.css({
                         "animation-name": "expand-bounce",
                         "animation-duration": "0.25s",
-                        "bottom": cur_bottom + "px",
-                    })
-                cur_bottom += $(this).height() + 42;
-            });
-        }
-    );
+                        "bottom": chara.height() + "px",
+                    });
+
+                    // Ajuster la position des messages précédents
+                    $(".speech").each(function (i) {
+                        if (i < index) {
+                            const prevElement = $(this);
+                            prevElement.animate(
+                                {bottom: "+=" + (element.height() + 42)},
+                                {duration: 250, queue: false}
+                            );
+                        }
+                    });
+
+                    cur_bottom += element.height() + 42;
+                    next(); // Passe à l'élément suivant dans la file d'attente
+                });
+        });
+    });
+
 </script>
 {% block js %}{% endblock %}
 </body>
