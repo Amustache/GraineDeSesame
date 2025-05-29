@@ -45,3 +45,10 @@ flowchart TD
     F --> H([Conseils + bonbon])
     G --> H
 ```
+
+## Credits
+- [Hive Systems](https://www.hivesystems.com/)'s [Are Your Passwords in the Green?](https://www.hivesystems.com/blog/are-your-passwords-in-the-green) (2025).
+- [Connor Finley](https://gist.github.com/cofinley)'s [French Frequency List](https://gist.github.com/cofinley/262765821e4defbc8ff2bdb3356a853b) (2025).
+- [Maxime Alay-Eddine](https://github.com/tarraschk)'s [Richelieu](https://github.com/tarraschk/richelieu), a list of the most common French passwords (2019).
+- [Dropbox](https://github.com/dropbox)'s [zxcvbn](https://github.com/dropbox/zxcvbn), a a password strength estimator (2017).
+  - I modified it to add the two previous lists + translate strings into French.

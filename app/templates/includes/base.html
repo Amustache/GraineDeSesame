@@ -3,10 +3,10 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-  <meta name="description" content="">
-  <meta name="author" content="">
+  <meta name="description" content="Expérience de craquage de mot de passe">
+  <meta name="author" content="Stache, Limonello">
 
-  <title>MyApp - {% block title %}{% endblock %}</title>
+  <title>Graine de Sésame - {% block title %}{% endblock %}</title>
 
   <!-- Bootstrap core CSS -->
   <link href="{{ url_for('static', filename='css/bootstrap.min.css') }}" rel="stylesheet">
@@ -17,20 +17,25 @@
 
 <body>
 <!-- Begin page content -->
-<main role="main" class="container-fluid">
+<main role="main" class="container-fluid text-center">
   <form method="POST">
     <div class="row">
-      <div class="col-3">
+      <div id="chara-space" class="col-3">
         <div class="image-container">
           <img id="chara" src="{{ url_for('static', filename='img/chara/' ~ chara_pic ~ '.png') }}" alt="Chara">
-          <div id="speech">
-            {{ speech_text }}
-          </div>
-          <button type="submit" class="btn btn-primary">Continuer</button>
+          {% for speech in speech_text[::-1] %}
+            <div id="speech-{{ loop.index }}" class="speech {% if loop.first %}speech-last{% endif %}">
+              {{ speech|safe }}
+            </div>
+          {% endfor %}
         </div>
       </div>
-      <div class="col-9">
+      <div id="actual-content" class="col-9">
         {% block content %}{% endblock %}
+        <div class=" float-end mt-5 me-5">
+          <a class="btn btn-secondary" href="{{ url_for('main.entry') }}">Retour au début</a>
+          <button type="submit" class="btn btn-primary btn-lg">Continuer</button>
+        </div>
       </div>
     </div>
   </form>
@@ -39,31 +44,24 @@
 <script src="{{ url_for('static', filename='js/bootstrap.bundle.min.js') }}"></script>
 <script src="{{ url_for('static', filename='js/jquery-3.7.1.min.js') }}"></script>
 <script>
-    var chara = $("#chara");
-    var speech = $("#speech");
 
-    chara.ready(
+    $(window).on("load",
         function () {
-            speech.css({
-                "animation-name": "expand-bounce",
-                "animation-duration": "0.25s"
+            const chara = $("#chara");
+            const speech = $(".speech");
+            let cur_bottom = chara.height();
+
+            speech.each(function (index) {
+                $(this)
+                    .css({
+                        "animation-name": "expand-bounce",
+                        "animation-duration": "0.25s",
+                        "bottom": cur_bottom + "px",
+                    })
+                cur_bottom += $(this).height() + 42;
             });
         }
     );
-</script>
-<script>
-    $(function () {
-        $('body').hide().fadeIn('slow');
-
-        $('a').click(function () {
-            var link = $(this).attr('href');
-            $('body').fadeOut('slow', function () {
-                window.location.href = link;
-            });
-            return false;
-        });
-
-    });
 </script>
 {% block js %}{% endblock %}
 </body>
