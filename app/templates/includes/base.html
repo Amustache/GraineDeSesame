@@ -54,16 +54,15 @@
             const element = $(this);
 
             element
-                .delay(500 * index) // Délai de 500ms multiplié par l'index
+                .delay(500 * index)
                 .queue(function (next) {
-                    // Appliquer l'animation pour le message actuel
                     element.css({
                         "animation-name": "expand-bounce",
                         "animation-duration": "0.25s",
                         "bottom": chara.height() + "px",
                     });
 
-                    // Ajuster la position des messages précédents
+
                     $(".speech").each(function (i) {
                         if (i < index) {
                             const prevElement = $(this);
@@ -75,11 +74,10 @@
                     });
 
                     cur_bottom += element.height() + 42;
-                    next(); // Passe à l'élément suivant dans la file d'attente
+                    next();
                 });
         });
     });
-
 </script>
 {% block js %}{% endblock %}
 </body>
