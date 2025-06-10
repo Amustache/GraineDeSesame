@@ -138,8 +138,8 @@ def enter_password():
                 "time": json.loads(request.form.get("time_medium")),
             }
         # strong
+        plain = request.form.get("strong")
         if plain and plain != "":
-            plain = request.form.get("strong")
             md5_hash, bcrypt_hash = hash_password(plain)
             session["strong"] = {
                 "plain": plain if current_app.config["DEBUG"] else "*" * len(plain),
@@ -157,32 +157,51 @@ def enter_password():
 
 @bp.route("/ack_password", methods=("GET", "POST"))
 def ack_password():
-    pass_scores = sorted([
-        session["weak"]["score"] if "weak" in session else -1,
-        session["medium"]["score"] if "medium" in session else -1,
-        session["strong"]["score"] if "strong" in session else -1,
-    ])
-    print(pass_scores)
-    # TODO
-    comm = "Trucs commentaire sur les mots de passe."
-    chara_pic = "draft_neutral"
-
-    # Parameters
     current_page = "part/ack_password.html"
     next_fun = "main.explanation_1"
+    chara_pic = "draft_neutral"
     speech_text = [
         "Merci pour les mots de passe !",
-        comm,
         "Nous allons pouvoir commencer l'expérience. Mais, nous n'allons pas stocker les mots de passe...",
     ]
 
     scores = [
-        "Risqué.",
-        "Faible.",
-        "Moyen.",
-        "Fort.",
-        "Excellent."
+        "Risqué",
+        "Faible",
+        "Moyen",
+        "Fort",
+        "Excellent"
     ]
+
+    pass_scores = [
+        session["weak"]["score"] if "weak" in session else -1,
+        session["medium"]["score"] if "medium" in session else -1,
+        session["strong"]["score"] if "strong" in session else -1,
+    ]
+    pass_scores = [s for s in pass_scores if s != -1]
+    total_pass = len(pass_scores)
+    pass_scores = sorted(set(pass_scores))
+    diff_pass = len(pass_scores)
+
+    match (total_pass, diff_pass):
+        case (0, _):
+            next_fun = "main.enter_password"
+            chara_pic = "draft_meh"
+            speech_text = [
+                "Aucun mot de passe n'a été entré...",
+                "Je vous laisse appuyer sur \"Continuer\" et réessayer."
+            ]
+        case (_, 1):
+            speech_text.insert(
+                1,
+                f"Tous vos de mots de passe ont le même score, '{scores[pass_scores[0]]}'. Pourquoi pas!"
+            )
+        case (_, _):
+            speech_text.insert(
+                1,
+                f"Les {total_pass} mots de passe ont un score différent, " + \
+                ", ".join([f"'{scores[i]}'" for i in pass_scores]) + "."
+            )
 
     # Current page
     if request.method == "GET":
