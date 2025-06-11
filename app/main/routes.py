@@ -5,6 +5,14 @@ from flask import render_template, request, redirect, url_for, session, current_
 from app.main.utilities import hash_password
 from app.main import bp
 
+SCORES_TEXT = [
+    "Risqué",
+    "Faible",
+    "Moyen",
+    "Fort",
+    "Excellent"
+]
+
 
 @bp.route("/test", methods=("GET", "POST"))
 def test():
@@ -99,8 +107,8 @@ def enter_password():
     speech_text = [
         "Bien ! Commençons !",
         "Je vous propose ici de me donner trois mots de passe, un faible, un moyen, un fort.",
-        #"Un mot de passe faible correspond à un mot de passe qui va facilement être découvert par de méchants pirates.",
-        #"Un mot de passe fort ne devrait pas pouvoir facilement être deviné par des personnes malicieuses.",
+        # "Un mot de passe faible correspond à un mot de passe qui va facilement être découvert par de méchants pirates.",
+        # "Un mot de passe fort ne devrait pas pouvoir facilement être deviné par des personnes malicieuses.",
         "A vous de proposer des mots de passe qui semblent coller !"
     ]
 
@@ -165,14 +173,6 @@ def ack_password():
         "Nous allons pouvoir commencer l'expérience. Mais, nous n'allons pas stocker les mots de passe...",
     ]
 
-    scores = [
-        "Risqué",
-        "Faible",
-        "Moyen",
-        "Fort",
-        "Excellent"
-    ]
-
     pass_scores = [
         session["weak"]["score"] if "weak" in session else -1,
         session["medium"]["score"] if "medium" in session else -1,
@@ -194,13 +194,13 @@ def ack_password():
         case (_, 1):
             speech_text.insert(
                 1,
-                f"Tous vos de mots de passe ont le même score, '{scores[pass_scores[0]]}'. Pourquoi pas !"
+                f"Tous vos de mots de passe ont le même score, '{SCORES_TEXT[pass_scores[0]]}'. Pourquoi pas !"
             )
         case (_, _):
             speech_text.insert(
                 1,
                 f"Les {total_pass} mots de passe ont un score différent, " + \
-                ", ".join([f"'{scores[i]}'" for i in pass_scores]) + "."
+                ", ".join([f"'{SCORES_TEXT[i]}'" for i in pass_scores]) + "."
             )
 
     # Current page
@@ -213,23 +213,26 @@ def ack_password():
                 "plain": session["weak"]["plain"],
                 "score": {
                     "score_percentage": int(100 * (1 + session["weak"]["score"]) / 5),
-                    "score_message": scores[session["weak"]["score"]],
+                    "score_message": SCORES_TEXT[session["weak"]["score"]],
                 },
-            } if "weak" in session else {"plain": "", "score": {"score_percentage": 0, "score_message": scores[0]}},
+            } if "weak" in session else {"plain": "",
+                                         "score": {"score_percentage": 0, "score_message": SCORES_TEXT[0]}},
             medium={
                 "plain": session["medium"]["plain"],
                 "score": {
                     "score_percentage": int(100 * (1 + session["medium"]["score"]) / 5),
-                    "score_message": scores[session["medium"]["score"]],
+                    "score_message": SCORES_TEXT[session["medium"]["score"]],
                 },
-            } if "medium" in session else {"plain": "", "score": {"score_percentage": 0, "score_message": scores[0]}},
+            } if "medium" in session else {"plain": "",
+                                           "score": {"score_percentage": 0, "score_message": SCORES_TEXT[0]}},
             strong={
                 "plain": session["strong"]["plain"],
                 "score": {
                     "score_percentage": int(100 * (1 + session["strong"]["score"]) / 5),
-                    "score_message": scores[session["strong"]["score"]],
+                    "score_message": SCORES_TEXT[session["strong"]["score"]],
                 },
-            } if "strong" in session else {"plain": "", "score": {"score_percentage": 0, "score_message": scores[0]}},
+            } if "strong" in session else {"plain": "",
+                                           "score": {"score_percentage": 0, "score_message": SCORES_TEXT[0]}},
         )
     # Next page
     if request.method == "POST":

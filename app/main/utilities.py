@@ -1,4 +1,5 @@
 import os
+from random import choices
 from string import Template
 
 import bcrypt
@@ -113,7 +114,7 @@ if __name__ == "__main__":
     # ssh_send_script("/home/hhueber/projects/GraineDeSesame/scripts/cluster_hashcat_simple.sh", "curnagl.dcsr.unil.ch", "hhueber", hashes=md5_hash)
 
     print(COMMAND_SRUN.format(command=command))
-    #test = ssh_send_command("ls", "curnagl.dcsr.unil.ch", "hhueber")
+    # test = ssh_send_command("ls", "curnagl.dcsr.unil.ch", "hhueber")
     test = ssh_send_command(COMMAND_SRUN.format(command=command), "curnagl.dcsr.unil.ch", "hhueber")
     try:
         print(test["stdout"].read())
@@ -127,3 +128,25 @@ if __name__ == "__main__":
         print(test["stderr"].read())
     except TimeoutError:
         pass
+
+
+def random_books() -> str:
+    """
+    tbh it's just so that there is a probability of having 🤓 somewhere.
+
+    :return: Three emojis for a title.
+    """
+    BOOKS = {
+        "📔": 0.6,
+        "📕": 1.0,
+        "📖": 0.5,
+        "📗": 1.0,
+        "📘": 1.0,
+        "📙": 1.0,
+        "📚": 0.3,
+        "📓": 0.4,
+        "📒": 0.7,
+        "🤓": 0.1,
+    }
+
+    return ''.join(choices(population=list(BOOKS.keys()), weights=list(BOOKS.values()), k=3))
