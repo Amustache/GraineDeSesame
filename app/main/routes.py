@@ -68,11 +68,11 @@ def disclaimer():
     # Parameters
     current_page = "part/disclaimer.html"
     next_fun = "main.enter_password"
-    chara_pic = "draft_neutral"
+    chara_pic = "draft_wink"
     speech_text = [
         "Durant cette expérience, nous allons tenter de deviner les mots de passe que vous allez fournir.",
         "Nous allons vous expliquer comment les <i>hackers</i> et autres pirates s'y prennent pour trouver vos mots de passe.",
-        "Bien entendu, ne donnez pas vos vrais mots de passe... 😉",
+        "Bien entendu, ne donnez pas vos vrais mots de passe...",
     ]
 
     # Current page
