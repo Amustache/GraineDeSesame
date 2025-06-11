@@ -247,13 +247,13 @@ def explanation_1():
     # Parameters
     current_page = "part/explanation.html"
     next_fun = "main.explanation_2"
-    chara_pic = "draft_neutral"
+    chara_pic = "draft_pointing"
     speech_text = [
         "D'ailleurs, lorsque vous créez un mot de passe pour un site Internet, il n'est jamais stocké tel quel !",
         "Les sites Internet utilisent des techniques pour \"cacher\" le mot de passe, afin de ne pas le garder.",
     ]
 
-    illu_pic = "hash"
+    illu_pic = "no_stock.png"
     illu_source = None
 
     # Current page
@@ -284,7 +284,7 @@ def explanation_2():
         "Le hachage est une fonction mathématique qui convertit votre mot de passe en une série de caractères fixe, appelée \"<i>hash</i>\", ou \"valeur de hachage\" en français.",
     ]
 
-    illu_pic = "hash"
+    illu_pic = "maths.png"
     illu_source = None
 
     # Current page
@@ -316,7 +316,7 @@ def explanation_3():
         "Les <i>hashes</i> sont conçues pour être irréversibles.",
     ]
 
-    illu_pic = "hash"
+    illu_pic = "1way.png"
     illu_source = None
 
     # Current page
@@ -341,14 +341,14 @@ def explanation_4():
     # Parameters
     current_page = "part/explanation.html"
     next_fun = "main.explanation_5"
-    chara_pic = "draft_neutral"
+    chara_pic = "draft_pointing"
     speech_text = [
         "Ce <i>hash</i> est ensuite stockée dans la base de données au lieu du mot de passe.",
         "Lorsque vous vous connectez, le site hache le mot de passe que vous entrez et compare le <i>hash</i> avec celui stocké.",
         "Si les valeurs correspondent, <i>you're in!</i>",
     ]
 
-    illu_pic = "hash"
+    illu_pic = "compar.png"
     illu_source = None
 
     # Current page
@@ -375,11 +375,12 @@ def explanation_5():
     next_fun = "main.explanation_6"
     chara_pic = "draft_neutral"
     speech_text = [
-        "Pour cette expérience, nous allons utiliser les algorithmes de hachage MD5 et bcrypt pour stocker les mots de passe.",
+        #"Pour cette expérience, nous allons utiliser les algorithmes de hachage MD5 et bcrypt pour stocker les mots de passe.",
+        "Pour cette expérience, nous allons utiliser l'algorithme de hachage MD5 - mais il en existe bien d'autres !",
     ]
 
-    illu_pic = "hash"
-    illu_source = None
+    illu_pic = "list_hashes.png"
+    illu_source = "List of hash functions <i>via</i> Wikipédia"
 
     # Current page
     if request.method == "GET":
@@ -403,13 +404,13 @@ def explanation_6():
     # Parameters
     current_page = "part/explanation.html"
     next_fun = "main.explanation_7"
-    chara_pic = "draft_neutral"
+    chara_pic = "draft_hack"
     speech_text = [
         "MD5 a été largement utilisé, mais il est maintenant considéré comme peu sûr, en raison des \"attaques par collision\".",
         "Une attaque par collision se produit lorsque deux entrées différentes produisent la même valeur de hachage, ce qui peut compromettre la sécurité.",
     ]
 
-    illu_pic = "hash"
+    illu_pic = "coll.png"
     illu_source = None
 
     # Current page
@@ -436,11 +437,11 @@ def explanation_7():
     next_fun = "main.explanation_8"
     chara_pic = "draft_neutral"
     speech_text = [
-        "Bcrypt, en revanche, est un algorithme de hachage plus moderne et plus sûr, spécialement conçu pour le stockage des mots de passe.",
+        "Un autre exemple, Bcrypt, est un algorithme de hachage plus moderne et plus sûr, spécialement conçu pour le stockage des mots de passe.",
         "Bcrypt utilise un \"facteur de travail\", ce qui signifie qu'il peut être configuré pour être plus lent et donc plus résistant aux attaques par force brute.",
     ]
 
-    illu_pic = "hash"
+    illu_pic = "bcrypt.png"
     illu_source = None
 
     # Current page
