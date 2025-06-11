@@ -253,12 +253,17 @@ def explanation_1():
         "Les sites Internet utilisent des techniques pour \"cacher\" le mot de passe, afin de ne pas le garder.",
     ]
 
+    illu_pic = "hash"
+    illu_source = None
+
     # Current page
     if request.method == "GET":
         return render_template(
             current_page,
             chara_pic=chara_pic,
             speech_text=speech_text,
+            illu_pic=illu_pic,
+            illu_source=illu_source,
         )
     # Next page
     if request.method == "POST":

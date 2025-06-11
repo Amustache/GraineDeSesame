@@ -6,6 +6,15 @@
   <h1 class="mt-5 mb-5">
     {{ random_books() }}
   </h1>
+  <figure class="">
+    <img id="illu"
+         src="{{ url_for('static', filename='img/illu/' ~ illu_pic ~ '.png') }}"
+         class="figure-img img-fluid rounded"
+         alt="Illustration"
+    >
+    <figcaption class="figure-caption">{{ "Source : " ~ illu_source if illu_source else "" }}</figcaption>
+  </figure>
+
 {% endblock %}
 
 {% block js %}{% endblock %}
