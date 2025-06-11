@@ -284,12 +284,17 @@ def explanation_2():
         "Le hachage est une fonction mathématique qui convertit votre mot de passe en une série de caractères fixe, appelée \"<i>hash</i>\", ou \"valeur de hachage\" en français.",
     ]
 
+    illu_pic = "hash"
+    illu_source = None
+
     # Current page
     if request.method == "GET":
         return render_template(
             current_page,
             chara_pic=chara_pic,
             speech_text=speech_text,
+            illu_pic=illu_pic,
+            illu_source=illu_source,
         )
     # Next page
     if request.method == "POST":
@@ -311,12 +316,17 @@ def explanation_3():
         "Les <i>hashes</i> sont conçues pour être irréversibles.",
     ]
 
+    illu_pic = "hash"
+    illu_source = None
+
     # Current page
     if request.method == "GET":
         return render_template(
             current_page,
             chara_pic=chara_pic,
             speech_text=speech_text,
+            illu_pic=illu_pic,
+            illu_source=illu_source,
         )
     # Next page
     if request.method == "POST":
@@ -338,12 +348,17 @@ def explanation_4():
         "Si les valeurs correspondent, <i>you're in!</i>",
     ]
 
+    illu_pic = "hash"
+    illu_source = None
+
     # Current page
     if request.method == "GET":
         return render_template(
             current_page,
             chara_pic=chara_pic,
             speech_text=speech_text,
+            illu_pic=illu_pic,
+            illu_source=illu_source,
         )
     # Next page
     if request.method == "POST":
@@ -363,12 +378,17 @@ def explanation_5():
         "Pour cette expérience, nous allons utiliser les algorithmes de hachage MD5 et bcrypt pour stocker les mots de passe.",
     ]
 
+    illu_pic = "hash"
+    illu_source = None
+
     # Current page
     if request.method == "GET":
         return render_template(
             current_page,
             chara_pic=chara_pic,
             speech_text=speech_text,
+            illu_pic=illu_pic,
+            illu_source=illu_source,
         )
     # Next page
     if request.method == "POST":
@@ -389,12 +409,17 @@ def explanation_6():
         "Une attaque par collision se produit lorsque deux entrées différentes produisent la même valeur de hachage, ce qui peut compromettre la sécurité.",
     ]
 
+    illu_pic = "hash"
+    illu_source = None
+
     # Current page
     if request.method == "GET":
         return render_template(
             current_page,
             chara_pic=chara_pic,
             speech_text=speech_text,
+            illu_pic=illu_pic,
+            illu_source=illu_source,
         )
     # Next page
     if request.method == "POST":
@@ -415,12 +440,46 @@ def explanation_7():
         "Bcrypt utilise un \"facteur de travail\", ce qui signifie qu'il peut être configuré pour être plus lent et donc plus résistant aux attaques par force brute.",
     ]
 
+    illu_pic = "hash"
+    illu_source = None
+
     # Current page
     if request.method == "GET":
         return render_template(
             current_page,
             chara_pic=chara_pic,
             speech_text=speech_text,
+            illu_pic=illu_pic,
+            illu_source=illu_source,
+        )
+    # Next page
+    if request.method == "POST":
+        return redirect(url_for(next_fun))
+
+    # Error
+    return redirect(url_for("main.entry"))
+@bp.route("/explanation_8", methods=("GET", "POST"))
+def explanation_8():
+    # Parameters
+    current_page = "part/explanation.html"
+    next_fun = "main.crack_1"
+    chara_pic = "draft_wink"
+    speech_text = [
+        "Assez discuté théorie, passons à la pratique !",
+        "Nous allons maintenant tenter de casser les mots de passe..."
+    ]
+
+    illu_pic = "clap-excited.gif"
+    illu_source = "Seven Bucks Productions <i>via</i> tenor.com"
+
+    # Current page
+    if request.method == "GET":
+        return render_template(
+            current_page,
+            chara_pic=chara_pic,
+            speech_text=speech_text,
+            illu_pic=illu_pic,
+            illu_source=illu_source,
         )
     # Next page
     if request.method == "POST":
@@ -429,8 +488,6 @@ def explanation_7():
     # Error
     return redirect(url_for("main.entry"))
 
-# Assez blabla voyons pour casser le mot de passe !
-# Sue la page suivante on casse
 
 # Page chargement cassage etc.
 
