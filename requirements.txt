@@ -12,3 +12,4 @@ pylint==3.3.7
 # Special
 bcrypt==4.3.0
 zxcvbn==4.5.0
+paramiko==3.5.1

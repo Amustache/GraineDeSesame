@@ -23,3 +23,10 @@ class Config:
     else:
         SQLALCHEMY_DATABASE_URI = f"{DB_ENGINE}://{DB_USERNAME}:{DB_PASSWORD}@{DB_HOST}:{DB_PORT}/{DB_NAME}"
     SQLALCHEMY_TRACK_MODIFICATIONS = False
+
+    CLUSTER_MODE = "ssh"
+
+    SSH_HOST = ""
+    SSH_USERNAME = ""
+    SSH_KEYFILE = ""
+    SSH_PASSWORD = ""

@@ -99,8 +99,8 @@ def enter_password():
     speech_text = [
         "Bien ! Commençons !",
         "Je vous propose ici de me donner trois mots de passe, un faible, un moyen, un fort.",
-        "Un mot de passe faible correspond à un mot de passe qui va facilement être découvert par de méchants pirates.",
-        "Un mot de passe fort ne devrait pas pouvoir facilement être deviné par des personnes malicieuses.",
+        #"Un mot de passe faible correspond à un mot de passe qui va facilement être découvert par de méchants pirates.",
+        #"Un mot de passe fort ne devrait pas pouvoir facilement être deviné par des personnes malicieuses.",
         "A vous de proposer des mots de passe qui semblent coller !"
     ]
 
@@ -194,7 +194,7 @@ def ack_password():
         case (_, 1):
             speech_text.insert(
                 1,
-                f"Tous vos de mots de passe ont le même score, '{scores[pass_scores[0]]}'. Pourquoi pas!"
+                f"Tous vos de mots de passe ont le même score, '{scores[pass_scores[0]]}'. Pourquoi pas !"
             )
         case (_, _):
             speech_text.insert(
@@ -242,13 +242,12 @@ def ack_password():
 @bp.route("/explanation_1", methods=("GET", "POST"))
 def explanation_1():
     # Parameters
-    current_page = "part/explanation_1.html"
+    current_page = "part/explanation.html"
     next_fun = "main.explanation_2"
     chara_pic = "draft_neutral"
     speech_text = [
         "D'ailleurs, lorsque vous créez un mot de passe pour un site Internet, il n'est jamais stocké tel quel !",
         "Les sites Internet utilisent des techniques pour \"cacher\" le mot de passe, afin de ne pas le garder.",
-        "L'une des méthodes les plus courantes est le hachage, qui transforme votre mot de passe en une chaîne de caractères illisible.",
     ]
 
     # Current page
@@ -269,14 +268,12 @@ def explanation_1():
 @bp.route("/explanation_2", methods=("GET", "POST"))
 def explanation_2():
     # Parameters
-    current_page = "part/explanation_2.html"
+    current_page = "part/explanation.html"
     next_fun = "main.explanation_3"
     chara_pic = "draft_neutral"
     speech_text = [
-        "Le hachage est une fonction mathématique qui convertit votre mot de passe en une série de caractères fixe, appelée \"valeur de hachage\".",
-        "Par exemple, même un simple mot comme <code>chat</code> devient méconnaissable après hachage, comme <code>aa8af3ebe14831a7cd1b6d1383a03755</code> (en utilisant un algorithme de hachage comme MD5).",
-        "Les valeurs de hachage sont conçues pour être irréversibles, ce qui signifie qu'il est très difficile de retrouver le mot de passe original à partir de la valeur de hachage.",
-        "Cette valeur de hachage est ensuite stockée dans la base de données au lieu du mot de passe en clair.",
+        "L'une des méthodes les plus courantes est le hachage !",
+        "Le hachage est une fonction mathématique qui convertit votre mot de passe en une série de caractères fixe, appelée \"<i>hash</i>\", ou \"valeur de hachage\" en français.",
     ]
 
     # Current page
@@ -297,13 +294,13 @@ def explanation_2():
 @bp.route("/explanation_3", methods=("GET", "POST"))
 def explanation_3():
     # Parameters
-    current_page = "part/explanation_3.html"
+    current_page = "part/explanation.html"
     next_fun = "main.explanation_4"
     chara_pic = "draft_neutral"
     speech_text = [
-        "Pour ajouter une couche de sécurité supplémentaire, les sites utilisent une technique appelée \"salage\".",
-        "Le salage consiste à ajouter une chaîne aléatoire unique, appelée \"sel\", à votre mot de passe avant de le hacher.",
-        "Chaque utilisateur·trice a un sel différent, ce qui rend encore plus difficile la tâche des pirates informatiques pour deviner les mots de passe.",
+        "Cette suite de caractères ne permet pas de deviner le mot d'origine.",
+        "Un mot comme <code>chat</code> se transforme en<br/><small><code>aa8af3ebe14831a7cd1b6d1383a03755</code></small><br/>par exemple !",
+        "Les <i>hashes</i> sont conçues pour être irréversibles.",
     ]
 
     # Current page
@@ -324,12 +321,13 @@ def explanation_3():
 @bp.route("/explanation_4", methods=("GET", "POST"))
 def explanation_4():
     # Parameters
-    current_page = "part/explanation_4.html"
+    current_page = "part/explanation.html"
     next_fun = "main.explanation_5"
     chara_pic = "draft_neutral"
     speech_text = [
-        "Lorsque vous vous connectez, le site hache le mot de passe que vous entrez et compare la valeur de hachage avec celle stockée dans la base de données.",
-        "Si les valeurs de hachage correspondent, vous êtes authentifié·e et pouvez accéder à votre compte.",
+        "Ce <i>hash</i> est ensuite stockée dans la base de données au lieu du mot de passe.",
+        "Lorsque vous vous connectez, le site hache le mot de passe que vous entrez et compare le <i>hash</i> avec celui stocké.",
+        "Si les valeurs correspondent, <i>you're in!</i>",
     ]
 
     # Current page
@@ -350,15 +348,11 @@ def explanation_4():
 @bp.route("/explanation_5", methods=("GET", "POST"))
 def explanation_5():
     # Parameters
-    current_page = "part/explanation_5.html"
+    current_page = "part/explanation.html"
     next_fun = "main.explanation_6"
     chara_pic = "draft_neutral"
     speech_text = [
         "Pour cette expérience, nous allons utiliser les algorithmes de hachage MD5 et bcrypt pour stocker les mots de passe.",
-        "MD5 a été largement utilisé, mais il est maintenant considéré comme peu sûr.",
-        "Une attaque par collision se produit lorsque deux entrées différentes produisent la même valeur de hachage, ce qui peut compromettre la sécurité.",
-        "Bcrypt, en revanche, est un algorithme de hachage plus moderne et plus sûr, spécialement conçu pour le stockage des mots de passe.",
-        "Bcrypt utilise un facteur de travail, ce qui signifie qu'il peut être configuré pour être plus lent et donc plus résistant aux attaques par force brute.",
     ]
 
     # Current page
@@ -379,11 +373,12 @@ def explanation_5():
 @bp.route("/explanation_6", methods=("GET", "POST"))
 def explanation_6():
     # Parameters
-    current_page = "part/explanation_6.html"
+    current_page = "part/explanation.html"
     next_fun = "main.explanation_7"
     chara_pic = "draft_neutral"
     speech_text = [
-        "XXX",
+        "MD5 a été largement utilisé, mais il est maintenant considéré comme peu sûr, en raison des \"attaques par collision\".",
+        "Une attaque par collision se produit lorsque deux entrées différentes produisent la même valeur de hachage, ce qui peut compromettre la sécurité.",
     ]
 
     # Current page
@@ -404,11 +399,12 @@ def explanation_6():
 @bp.route("/explanation_7", methods=("GET", "POST"))
 def explanation_7():
     # Parameters
-    current_page = "part/explanation_7.html"
+    current_page = "part/explanation.html"
     next_fun = "main.explanation_8"
     chara_pic = "draft_neutral"
     speech_text = [
-        "XXX",
+        "Bcrypt, en revanche, est un algorithme de hachage plus moderne et plus sûr, spécialement conçu pour le stockage des mots de passe.",
+        "Bcrypt utilise un \"facteur de travail\", ce qui signifie qu'il peut être configuré pour être plus lent et donc plus résistant aux attaques par force brute.",
     ]
 
     # Current page
@@ -425,27 +421,9 @@ def explanation_7():
     # Error
     return redirect(url_for("main.entry"))
 
+# Assez blabla voyons pour casser le mot de passe !
+# Sue la page suivante on casse
 
-@bp.route("/explanation_8", methods=("GET", "POST"))
-def explanation_8():
-    # Parameters
-    current_page = "part/explanation_8.html"
-    next_fun = "main.cracking"
-    chara_pic = "draft_neutral"
-    speech_text = [
-        "XXX",
-    ]
+# Page chargement cassage etc.
 
-    # Current page
-    if request.method == "GET":
-        return render_template(
-            current_page,
-            chara_pic=chara_pic,
-            speech_text=speech_text,
-        )
-    # Next page
-    if request.method == "POST":
-        return redirect(url_for(next_fun))
-
-    # Error
-    return redirect(url_for("main.entry"))
+# Résultats
