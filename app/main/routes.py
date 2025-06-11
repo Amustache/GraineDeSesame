@@ -21,7 +21,7 @@ def test():
     next_fun = "main.test"
     chara_pic = "draft_neutral"
     speech_text = [
-        "dd ! Mon nom est Égide, et nous allons découvrir ensemble comment les mots de passes fonctionnent.",
+        "Bonjour ! Mon nom est Égide, et nous allons découvrir ensemble comment les mots de passes fonctionnent.",
         "Autre texte",
         "asdfdsaf texte",
         "af dsf",
