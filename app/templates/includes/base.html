@@ -83,6 +83,12 @@
         });
     });
 </script>
+<script>
+    // Back to start after 180s
+    window.setTimeout(function () {
+        window.location.href = "/";
+    }, 180000);
+</script>
 {% block js %}{% endblock %}
 </body>
 </html>
