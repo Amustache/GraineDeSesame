@@ -52,6 +52,16 @@
       }, 30000);
   </script>
   <script>
+      const continue_button = document.querySelector('#continue');
+      let count = 30;
+      continue_button.textContent = count + ' secondes';
+
+      setInterval(() => {
+          continue_button.textContent = count-- + ' seconde';
+          continue_button.textContent += count === 1 ? '' : 's';
+      }, 1000);
+  </script>
+  <script>
       const result_url = {{ url_for("main.get_results", hashes=",".join([weak_md5, medium_md5, strong_md5]))|tojson }};
       console.log(result_url);
 
@@ -68,7 +78,5 @@
                   }
               });
       }, 5000);
-
-
   </script>
 {% endblock %}
