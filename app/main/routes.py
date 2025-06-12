@@ -128,7 +128,7 @@ def enter_password():
         if plain and plain != "":
             md5_hash, bcrypt_hash = hash_password(plain)
             session["weak"] = {
-                "plain": plain if current_app.config["DEBUG"] else "*" * len(plain),
+                "plain": plain,
                 "score": int(request.form.get("score_weak")),
                 "md5_hash": md5_hash,
                 "bcrypt_hash": bcrypt_hash,
@@ -139,7 +139,7 @@ def enter_password():
         if plain and plain != "":
             md5_hash, bcrypt_hash = hash_password(plain)
             session["medium"] = {
-                "plain": plain if current_app.config["DEBUG"] else "*" * len(plain),
+                "plain": plain,
                 "score": int(request.form.get("score_medium")),
                 "md5_hash": md5_hash,
                 "bcrypt_hash": bcrypt_hash,
@@ -150,7 +150,7 @@ def enter_password():
         if plain and plain != "":
             md5_hash, bcrypt_hash = hash_password(plain)
             session["strong"] = {
-                "plain": plain if current_app.config["DEBUG"] else "*" * len(plain),
+                "plain": plain,
                 "score": int(request.form.get("score_strong")),
                 "md5_hash": md5_hash,
                 "bcrypt_hash": bcrypt_hash,
@@ -236,6 +236,14 @@ def ack_password():
         )
     # Next page
     if request.method == "POST":
+        # We deletin' just for the beauty of it...
+        if "weak" in session:
+            del session["weak"]["plain"]
+        if "medium" in session:
+            del session["medium"]["plain"]
+        if "strong" in session:
+            del session["strong"]["plain"]
+
         return redirect(url_for(next_fun))
 
     # Error
@@ -375,7 +383,7 @@ def explanation_5():
     next_fun = "main.explanation_6"
     chara_pic = "draft_neutral"
     speech_text = [
-        #"Pour cette expérience, nous allons utiliser les algorithmes de hachage MD5 et bcrypt pour stocker les mots de passe.",
+        # "Pour cette expérience, nous allons utiliser les algorithmes de hachage MD5 et bcrypt pour stocker les mots de passe.",
         "Pour cette expérience, nous allons utiliser l'algorithme de hachage MD5 - mais il en existe bien d'autres !",
     ]
 
@@ -459,6 +467,8 @@ def explanation_7():
 
     # Error
     return redirect(url_for("main.entry"))
+
+
 @bp.route("/explanation_8", methods=("GET", "POST"))
 def explanation_8():
     # Parameters
@@ -490,6 +500,114 @@ def explanation_8():
     return redirect(url_for("main.entry"))
 
 
-# Page chargement cassage etc.
+@bp.route("/crack", methods=("GET", "POST"))
+@bp.route("/crack_1", methods=("GET", "POST"))
+def crack_1():
+    # Parameters
+    current_page = "part/crack.html"
+    next_fun = "main.crack_2"
+    chara_pic = "draft_pointing"
+    speech_text = [
+        "Voici les <i>hashes</i> des mots de passe données au début ! Comme promis, nous n'avons pas gardé les originaux.",
+        "Nous allons envoyer ces <i>hashes</i> sur des ordinateurs très puissants, pour tenter de les craquer...",
+    ]
 
-# Résultats
+    # Current page
+    if request.method == "GET":
+        return render_template(
+            current_page,
+            chara_pic=chara_pic,
+            speech_text=speech_text,
+            weak_md5=session["weak"]["md5_hash"] if "weak" in session else "",
+            medium_md5=session["medium"]["md5_hash"] if "medium" in session else "",
+            strong_md5=session["strong"]["md5_hash"] if "strong" in session else "",
+        )
+    # Next page
+    if request.method == "POST":
+        return redirect(url_for(next_fun))
+
+    # Error
+    return redirect(url_for("main.entry"))
+
+
+@bp.route("/crack_2", methods=("GET", "POST"))
+def crack_2():
+    # Parameters
+    current_page = "part/oz.html"
+    next_fun = "main.results"
+    chara_pic = "draft_hack"
+    speech_text = [
+        "Et c'est parti...",
+        "On va essayer...",
+        "... De craquer tout ça...",
+        "...",
+        "Maximum pendant trente secondes...",
+        "...",
+    ]
+
+    # Current page
+    if request.method == "GET":
+        return render_template(
+            current_page,
+            chara_pic=chara_pic,
+            speech_text=speech_text,
+            weak_md5=session["weak"]["md5_hash"] if "weak" in session else "",
+            medium_md5=session["medium"]["md5_hash"] if "medium" in session else "",
+            strong_md5=session["strong"]["md5_hash"] if "strong" in session else "",
+        )
+    # Next page
+    if request.method == "POST":
+        return redirect(url_for(next_fun))
+
+    # Error
+    return redirect(url_for("main.entry"))
+
+@bp.route("/results", methods=("GET", "POST"))
+def results():
+    # Parameters
+    current_page = "part/results.html"
+    next_fun = "main.advices"
+    chara_pic = "draft_neutral"
+    speech_text = [
+        "Blabla sur les résultats.",
+    ]
+
+    # Current page
+    if request.method == "GET":
+        return render_template(
+            current_page,
+            chara_pic=chara_pic,
+            speech_text=speech_text,
+        )
+    # Next page
+    if request.method == "POST":
+        return redirect(url_for(next_fun))
+
+    # Error
+    return redirect(url_for("main.entry"))
+
+@bp.route("/advices", methods=("GET", "POST"))
+def advices():
+    # Parameters
+    current_page = "part/advices.html"
+    next_fun = "main.entry"
+    chara_pic = "draft_pointing"
+    speech_text = [
+        "Merci d'avoir participé à cette expérience avec moi !",
+        "On se laisse sur quelques conseils pour de meilleurs mots de passe...",
+        "Bonne suite, et <i>stay safe</i>!",
+    ]
+
+    # Current page
+    if request.method == "GET":
+        return render_template(
+            current_page,
+            chara_pic=chara_pic,
+            speech_text=speech_text,
+        )
+    # Next page
+    if request.method == "POST":
+        return redirect(url_for(next_fun))
+
+    # Error
+    return redirect(url_for("main.entry"))

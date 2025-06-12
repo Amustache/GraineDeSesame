@@ -3,7 +3,33 @@
 {% block css %}{% endblock %}
 
 {% block content %}
-  <p>Placeholder</p>
+  <h1 class="mt-5 mb-5">
+    👀⚔️🔐
+  </h1>
+  <div class="row">
+    <div class="col-3"></div>
+    <div class="col-6">
+      <input
+          class="form-control form-control-lg mb-3"
+          type="text"
+          value="{{ weak_md5 }}"
+          disabled
+      >
+      <input
+          class="form-control form-control-lg mb-3"
+          type="text"
+          value="{{ medium_md5 }}"
+          disabled
+      >
+      <input
+          class="form-control form-control-lg mb-3"
+          type="text"
+          value="{{ strong_md5 }}"
+          disabled
+      >
+    </div>
+    <div class="col-3"></div>
+  </div>
 {% endblock %}
 
 {% block js %}{% endblock %}

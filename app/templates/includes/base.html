@@ -34,12 +34,14 @@
       </div>
       <div id="actual-content" class="col-9">
         {% block content %}{% endblock %}
-        <a class="btn btn-secondary btn-lg float-start mt-5 me-5" href="{{ url_for('main.entry') }}">
-          Retour au début
-        </a>
-        <button type="submit" class="btn btn-primary btn-lg float-end mt-5 me-5">
-          Continuer
-        </button>
+        <div id="buttons">
+          <a id="back" class="btn btn-secondary btn-lg float-start mt-5 me-5" href="{{ url_for('main.entry') }}">
+            Retour au début
+          </a>
+          <button id="continue" type="submit" class="btn btn-primary btn-lg float-end mt-5 me-5">
+            Continuer
+          </button>
+        </div>
       </div>
     </div>
   </form>
