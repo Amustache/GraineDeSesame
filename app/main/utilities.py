@@ -11,7 +11,7 @@ from paramiko.buffered_pipe import PipeTimeout
 from flask import current_app
 
 COMMAND_SRUN = "srun -c 8 --mem 32G --partition gpu-l40 --reservation=password_day_test --gres gpu:2 --time 120 bash -c '{command}'"
-COMMAND_SQUEUE = "squeue -p gpu-l40 -u hhueber -h"
+COMMAND_SQUEUE = "squeue -p gpu-l40 -u username -h"
 
 
 def hash_password(password: str) -> (str, bytes):
@@ -54,18 +54,21 @@ def ssh_send_command(
         timeout: int = 5,
         **kwargs
 ):
-    client = ssh_connect_client(host, keyfilename, password, username)
-
     try:
+        client = ssh_connect_client(host, keyfilename, password, username)
         ssh_stdin, ssh_stdout, ssh_stderr = client.exec_command(command, timeout=timeout)
     except SSHException as e:  # Most likely timeout
         return None
 
-    return {
-        "stdin": ssh_stdin,
-        "stdout": ssh_stdout,
-        "stderr": ssh_stderr,
+    result = {
+        #"stdin": ssh_stdin.read(),
+        "stdout": ssh_stdout.read(),
+        "stderr": ssh_stderr.read(),
     }
+
+    client.close()
+
+    return result
 
 
 def ssh_send_script(
@@ -86,7 +89,6 @@ def ssh_send_script(
     with open(script, "r") as f:
         template = Template(f.read())
         result = template.safe_substitute(**kwargs)
-        print(result)
         stdin.write(result)
 
     res = stdout.read()
@@ -122,11 +124,11 @@ def random_books() -> str:
 
 def ssh_hashcat_from_hashes(hashes: list[str]) -> dict | None:
     sep = "\|"
-    command = f"module load cuda hashcat;hashcat -m 0 --show /users/hhueber/hashcat_test/hashcat-6.2.6/current_hash | grep '{sep.join(hashes)}'"
-    test = ssh_send_command(command, "curnagl.dcsr.unil.ch", "hhueber")
+    command = f"module load cuda hashcat;hashcat -m 0 --show /users/username/hashcat_test/hashcat-6.2.6/current_hash | grep '{sep.join(hashes)}'"
+    test = ssh_send_command(command, "curnagl.dcsr.unil.ch", "username")
     try:
-        stdout = test["stdout"].read()
-        stderr = test["stderr"].read()
+        stdout = test["stdout"]
+        stderr = test["stderr"]
     except TimeoutError:
         return None
 
@@ -153,20 +155,20 @@ if __name__ == "__main__":
 
     hashes = [md5_hash, md5_hash_123456, md5_hash_password]
 
-    # command = f"cd /users/hhueber/hashcat_test/hashcat-6.2.6 ; rm current_hash ; for var in \"{' '.join([md5_hash, md5_hash_password, md5_hash_123456])}\" ; do echo $var >> current_hash ; done ; module load cuda hashcat ; hashcat -m 0 -a 3 current_hash"
+    # command = f"cd /users/username/hashcat_test/hashcat-6.2.6 ; rm current_hash ; for var in \"{' '.join([md5_hash, md5_hash_password, md5_hash_123456])}\" ; do echo $var >> current_hash ; done ; module load cuda hashcat ; hashcat -m 0 -a 3 current_hash"
     #
-    # # ssh_send_script("/home/hhueber/projects/GraineDeSesame/scripts/cluster_hashcat_simple.sh", "curnagl.dcsr.unil.ch", "hhueber", hashes=md5_hash)
+    # # ssh_send_script("/home/username/projects/GraineDeSesame/scripts/cluster_hashcat_simple.sh", "curnagl.dcsr.unil.ch", "username", hashes=md5_hash)
     #
     # print(COMMAND_SRUN.format(command=command))
-    # # test = ssh_send_command("ls", "curnagl.dcsr.unil.ch", "hhueber")
-    # test = ssh_send_command(COMMAND_SRUN.format(command=command), "curnagl.dcsr.unil.ch", "hhueber")
+    # # test = ssh_send_command("ls", "curnagl.dcsr.unil.ch", "username")
+    # test = ssh_send_command(COMMAND_SRUN.format(command=command), "curnagl.dcsr.unil.ch", "username")
     # try:
     #     print(test["stdout"].read())
     #     print(test["stderr"].read())
     # except TimeoutError:
     #     pass
     #
-    # test = ssh_send_command(COMMAND_SQUEUE, "curnagl.dcsr.unil.ch", "hhueber")
+    # test = ssh_send_command(COMMAND_SQUEUE, "curnagl.dcsr.unil.ch", "username")
     # try:
     #     print(test["stdout"].read())
     #     print(test["stderr"].read())

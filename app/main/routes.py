@@ -1,8 +1,9 @@
+import threading
 import json
 
 from flask import render_template, request, redirect, url_for, session, current_app
 
-from app.main.utilities import hash_password, ssh_hashcat_from_hashes
+from app.main.utilities import hash_password, ssh_hashcat_from_hashes, ssh_send_command
 from app.main import bp
 
 SCORES_TEXT = [
@@ -236,13 +237,46 @@ def ack_password():
         )
     # Next page
     if request.method == "POST":
-        # We deletin' just for the beauty of it...
-        if "weak" in session:
-            del session["weak"]["plain"]
-        if "medium" in session:
-            del session["medium"]["plain"]
-        if "strong" in session:
-            del session["strong"]["plain"]
+        if next_fun != "main.enter_password":  # Check that passwords
+            # We deletin' just for the beauty of it...
+            hashes = list()
+            if "weak" in session:
+                del session["weak"]["plain"]
+                hashes.append(session["weak"]["md5_hash"])
+            if "medium" in session:
+                del session["medium"]["plain"]
+                hashes.append(session["medium"]["md5_hash"])
+            if "strong" in session:
+                del session["strong"]["plain"]
+                hashes.append(session["strong"]["md5_hash"])
+            hashes = '\n'.join(hashes)
+
+            # Send password for cracking
+            command = fr"printf '{hashes}' > /users/username/hashcat_test/hashcat-6.2.6/current_hash"
+            print(command)
+            test = ssh_send_command(command, "curnagl.dcsr.unil.ch", "username")
+            try:
+                stdout = test["stdout"]
+                print(stdout)
+                stderr = test["stderr"]
+                print(stderr)
+            except TimeoutError:
+                pass
+
+            def fun_fun_2():
+                command = 'srun -c 8 --mem 32G --partition gpu-l40 --reservation=password_day --gres gpu:8 bash -c "module load cuda hashcat;hashcat --force -O -w 4 --opencl-device-types 1,2 -m 0 -a 0 /users/username/hashcat_test/hashcat-6.2.6/current_hash /reference/weakpass/weakpass_4.txt -r /users/username/hashcat_test/hashcat-6.2.6/rules/OneRuleToRuleThemAll.rule"'
+                print(command)
+                test = ssh_send_command(command, "curnagl.dcsr.unil.ch", "username")
+                try:
+                    stdout = test["stdout"]
+                    print(stdout)
+                    stderr = test["stderr"]
+                    print(stderr)
+                except TimeoutError:
+                    pass
+
+            fun_thread = threading.Thread(target=fun_fun_2, name="do stuff")
+            fun_thread.start()
 
         return redirect(url_for(next_fun))
 
@@ -542,14 +576,14 @@ def get_results():
 def crack_2():
     # Parameters
     current_page = "part/oz.html"
-    next_fun = "main.results"
+    next_fun = "main.advices"
     chara_pic = "draft_hack"
     speech_text = [
         "Et c'est parti...",
         "On va essayer...",
         "... De craquer tout ça...",
         "...",
-        "Maximum pendant trente secondes...",
+        "Maximum pendant soixante secondes...",
         "...",
     ]
 

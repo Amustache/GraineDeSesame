@@ -11,22 +11,22 @@
     <div class="col-8">
       <div id="{{ weak_md5 }}" class="row mb-3">
         <div class="input-group input-group-lg">
-          <span class="input-group-text" id="{{ weak_md5 }}_hash"><code>{{ weak_md5 }}</code></span>
-          <input id="{{ weak_md5 }}_plain" type="text" class="form-control" value="???">
+          <span class="input-group-text" id="{{ weak_md5 }}_hash"><code>{{ weak_md5 or '(pas de hash)' }}</code></span>
+          <input id="{{ weak_md5 }}_plain" type="text" class="form-control" value="{{ '???' if weak_md5 else '' }}">
           <span class="input-group-text" id="{{ weak_md5 }}_icon"><i class="bi bi-hourglass-bottom"></i></span>
         </div>
       </div>
       <div id="{{ medium_md5 }}" class="row mb-3">
         <div class="input-group input-group-lg">
-          <span class="input-group-text" id="{{ medium_md5 }}_hash"><code>{{ medium_md5 }}</code></span>
-          <input id="{{ medium_md5 }}_plain" type="text" class="form-control" value="???">
+          <span class="input-group-text" id="{{ medium_md5 }}_hash"><code>{{ medium_md5 or '(pas de hash)' }}</code></span>
+          <input id="{{ medium_md5 }}_plain" type="text" class="form-control" value="{{ '???' if medium_md5 else '' }}">
           <span class="input-group-text" id="{{ medium_md5 }}_icon"><i class="bi bi-hourglass-bottom"></i></span>
         </div>
       </div>
       <div id="{{ strong_md5 }}" class="row mb-3">
         <div class="input-group input-group-lg">
-          <span class="input-group-text" id="{{ strong_md5 }}_hash"><code>{{ strong_md5 }}</code></span>
-          <input id="{{ strong_md5 }}_plain" type="text" class="form-control" value="???">
+          <span class="input-group-text" id="{{ strong_md5 }}_hash"><code>{{ strong_md5 or '(pas de hash)' }}</code></span>
+          <input id="{{ strong_md5 }}_plain" type="text" class="form-control" value="{{ '???' if strong_md5 else '' }}">
           <span class="input-group-text" id="{{ strong_md5 }}_icon"><i class="bi bi-hourglass-bottom"></i></span>
         </div>
       </div>
@@ -49,11 +49,11 @@
 
       window.setTimeout(function () {
           form.form.submit();
-      }, 30000);
+      }, 60000);
   </script>
   <script>
       const continue_button = document.querySelector('#continue');
-      let count = 30;
+      let count = 60;
       continue_button.textContent = count + ' secondes';
 
       setInterval(() => {
