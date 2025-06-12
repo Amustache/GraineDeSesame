@@ -7,55 +7,31 @@
     ⏳💻⌛️
   </h1>
   <div class="row">
-    <div class="col-3"></div>
-    <div class="col-6">
-      <div class="row">
-        <div class="col-10">
-          <input
-              class="form-control form-control-lg mb-3"
-              type="text"
-              value="{{ weak_md5 }}"
-              disabled
-          >
-        </div>
-        <div class="col-2">
-          <div id="spinner_weak" class="spinner-border text-danger" role="status">
-            <span class="visually-hidden">Loading...</span>
-          </div>
+    <div class="col-2"></div>
+    <div class="col-8">
+      <div id="{{ weak_md5 }}" class="row mb-3">
+        <div class="input-group input-group-lg">
+          <span class="input-group-text" id="{{ weak_md5 }}_hash"><code>{{ weak_md5 }}</code></span>
+          <input id="{{ weak_md5 }}_plain" type="text" class="form-control" value="???">
+          <span class="input-group-text" id="{{ weak_md5 }}_icon"><i class="bi bi-hourglass-bottom"></i></span>
         </div>
       </div>
-      <div class="row">
-        <div class="col-10">
-          <input
-              class="form-control form-control-lg mb-3"
-              type="text"
-              value="{{ medium_md5 }}"
-              disabled
-          >
-        </div>
-        <div class="col-2">
-          <div id="spinner_medium" class="spinner-border text-warning" role="status">
-            <span class="visually-hidden">Loading...</span>
-          </div>
+      <div id="{{ medium_md5 }}" class="row mb-3">
+        <div class="input-group input-group-lg">
+          <span class="input-group-text" id="{{ medium_md5 }}_hash"><code>{{ medium_md5 }}</code></span>
+          <input id="{{ medium_md5 }}_plain" type="text" class="form-control" value="???">
+          <span class="input-group-text" id="{{ medium_md5 }}_icon"><i class="bi bi-hourglass-bottom"></i></span>
         </div>
       </div>
-      <div class="row">
-        <div class="col-10">
-          <input
-              class="form-control form-control-lg mb-3"
-              type="text"
-              value="{{ strong_md5 }}"
-              disabled
-          >
-        </div>
-        <div class="col-2">
-          <div id="spinner_strong" class="spinner-border text-success" role="status">
-            <span class="visually-hidden">Loading...</span>
-          </div>
+      <div id="{{ strong_md5 }}" class="row mb-3">
+        <div class="input-group input-group-lg">
+          <span class="input-group-text" id="{{ strong_md5 }}_hash"><code>{{ strong_md5 }}</code></span>
+          <input id="{{ strong_md5 }}_plain" type="text" class="form-control" value="???">
+          <span class="input-group-text" id="{{ strong_md5 }}_icon"><i class="bi bi-hourglass-bottom"></i></span>
         </div>
       </div>
     </div>
-    <div class="col-3"></div>
+    <div class="col-2"></div>
   </div>
 {% endblock %}
 {% block js %}
@@ -74,5 +50,25 @@
       window.setTimeout(function () {
           form.form.submit();
       }, 30000);
+  </script>
+  <script>
+      const result_url = {{ url_for("main.get_results", hashes=",".join([weak_md5, medium_md5, strong_md5]))|tojson }};
+      console.log(result_url);
+
+      setInterval(async () => {
+          await fetch(result_url)
+              .then(res => res.json())
+              .then(data => {
+                  console.log(data);
+                  for (const hash in data) {
+                      document.getElementById(hash + '_plain').value = data[hash];
+                      document.getElementById(hash + '_icon').innerHTML = '<i class="bi bi-check2-circle"></i>';
+                      document.getElementById(hash + '_icon').classList.add("bg-success");
+                      document.getElementById(hash + '_icon').classList.add("text-white");
+                  }
+              });
+      }, 5000);
+
+
   </script>
 {% endblock %}

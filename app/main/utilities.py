@@ -8,6 +8,7 @@ import hashlib
 import paramiko
 from paramiko import SSHException
 from paramiko.buffered_pipe import PipeTimeout
+from flask import current_app
 
 COMMAND_SRUN = "srun -c 8 --mem 32G --partition gpu-l40 --reservation=password_day_test --gres gpu:2 --time 120 bash -c '{command}'"
 COMMAND_SQUEUE = "squeue -p gpu-l40 -u hhueber -h"
@@ -25,6 +26,23 @@ def hash_password(password: str) -> (str, bytes):
 def check_hash(password: str, md5_hash: str, bcrypt_hash: bytes) -> (bool, bool):
     password_encoded = password.encode("utf-8")
     return md5_hash == hashlib.md5(password_encoded).hexdigest(), bcrypt.checkpw(password_encoded, bcrypt_hash)
+
+
+def ssh_connect_client(host, keyfilename, password, username):
+    client = paramiko.SSHClient()
+    client.load_system_host_keys()
+    client.load_host_keys(os.path.expanduser("~/.ssh/known_hosts"))
+    client.set_missing_host_key_policy(paramiko.AutoAddPolicy())
+
+    if keyfilename:
+        k = paramiko.RSAKey.from_private_key_file(keyfilename)
+        client.connect(hostname=host, username=username, pkey=k)
+    elif password:
+        client.connect(hostname=host, username=username, password=password)
+    else:
+        client.connect(hostname=host, username=username)
+
+    return client
 
 
 def ssh_send_command(
@@ -80,56 +98,6 @@ def ssh_send_script(
     return res
 
 
-def ssh_connect_client(host, keyfilename, password, username):
-    client = paramiko.SSHClient()
-    client.load_system_host_keys()
-    client.load_host_keys(os.path.expanduser("~/.ssh/known_hosts"))
-    client.set_missing_host_key_policy(paramiko.AutoAddPolicy())
-
-    if keyfilename:
-        k = paramiko.RSAKey.from_private_key_file(keyfilename)
-        client.connect(hostname=host, username=username, pkey=k)
-    elif password:
-        client.connect(hostname=host, username=username, password=password)
-    else:
-        client.connect(hostname=host, username=username)
-
-    return client
-
-
-if __name__ == "__main__":
-    md5_hash, bcrypt_hash = hash_password("TEST")
-    md5_hash_password, _ = hash_password("password")  # Sanity chekc
-    md5_hash_123456, _ = hash_password("123456")  # Sanity chekc
-    print(md5_hash, bcrypt_hash)
-
-    # Check False
-    print(check_hash("test", md5_hash, bcrypt_hash))
-
-    # Check True
-    print(check_hash("TEST", md5_hash, bcrypt_hash))
-
-    command = f"cd /users/hhueber/hashcat_test/hashcat-6.2.6 ; rm current_hash ; for var in \"{' '.join([md5_hash, md5_hash_password, md5_hash_123456])}\" ; do echo $var >> current_hash ; done ; module load cuda hashcat ; hashcat -m 0 -a 3 current_hash"
-
-    # ssh_send_script("/home/hhueber/projects/GraineDeSesame/scripts/cluster_hashcat_simple.sh", "curnagl.dcsr.unil.ch", "hhueber", hashes=md5_hash)
-
-    print(COMMAND_SRUN.format(command=command))
-    # test = ssh_send_command("ls", "curnagl.dcsr.unil.ch", "hhueber")
-    test = ssh_send_command(COMMAND_SRUN.format(command=command), "curnagl.dcsr.unil.ch", "hhueber")
-    try:
-        print(test["stdout"].read())
-        print(test["stderr"].read())
-    except TimeoutError:
-        pass
-
-    test = ssh_send_command(COMMAND_SQUEUE, "curnagl.dcsr.unil.ch", "hhueber")
-    try:
-        print(test["stdout"].read())
-        print(test["stderr"].read())
-    except TimeoutError:
-        pass
-
-
 def random_books() -> str:
     """
     tbh it's just so that there is a probability of having 🤓 somewhere.
@@ -150,3 +118,57 @@ def random_books() -> str:
     }
 
     return ''.join(choices(population=list(BOOKS.keys()), weights=list(BOOKS.values()), k=3))
+
+
+def ssh_hashcat_from_hashes(hashes: list[str]) -> dict | None:
+    sep = "\|"
+    command = f"module load cuda hashcat;hashcat -m 0 --show /users/hhueber/hashcat_test/hashcat-6.2.6/current_hash | grep '{sep.join(hashes)}'"
+    test = ssh_send_command(command, "curnagl.dcsr.unil.ch", "hhueber")
+    try:
+        stdout = test["stdout"].read()
+        stderr = test["stderr"].read()
+    except TimeoutError:
+        return None
+
+    if stderr:
+        return None
+
+    if stdout:
+        return {k: v for k, v in [r.split(":") for r in stdout.decode().split("\n") if r != ""]}
+    else:
+        return None
+
+
+if __name__ == "__main__":
+    md5_hash, bcrypt_hash = hash_password("TEST")
+    md5_hash_password, _ = hash_password("password")  # Sanity chekc
+    md5_hash_123456, _ = hash_password("123456")  # Sanity chekc
+    print(md5_hash, bcrypt_hash)
+
+    # Check False
+    print(check_hash("test", md5_hash, bcrypt_hash))
+
+    # Check True
+    print(check_hash("TEST", md5_hash, bcrypt_hash))
+
+    hashes = [md5_hash, md5_hash_123456, md5_hash_password]
+
+    # command = f"cd /users/hhueber/hashcat_test/hashcat-6.2.6 ; rm current_hash ; for var in \"{' '.join([md5_hash, md5_hash_password, md5_hash_123456])}\" ; do echo $var >> current_hash ; done ; module load cuda hashcat ; hashcat -m 0 -a 3 current_hash"
+    #
+    # # ssh_send_script("/home/hhueber/projects/GraineDeSesame/scripts/cluster_hashcat_simple.sh", "curnagl.dcsr.unil.ch", "hhueber", hashes=md5_hash)
+    #
+    # print(COMMAND_SRUN.format(command=command))
+    # # test = ssh_send_command("ls", "curnagl.dcsr.unil.ch", "hhueber")
+    # test = ssh_send_command(COMMAND_SRUN.format(command=command), "curnagl.dcsr.unil.ch", "hhueber")
+    # try:
+    #     print(test["stdout"].read())
+    #     print(test["stderr"].read())
+    # except TimeoutError:
+    #     pass
+    #
+    # test = ssh_send_command(COMMAND_SQUEUE, "curnagl.dcsr.unil.ch", "hhueber")
+    # try:
+    #     print(test["stdout"].read())
+    #     print(test["stderr"].read())
+    # except TimeoutError:
+    #     pass

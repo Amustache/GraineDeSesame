@@ -27,5 +27,6 @@ class Config:
 
     SSH_HOST = ""
     SSH_USERNAME = ""
-    SSH_KEYFILE = ""
-    SSH_PASSWORD = ""
+    SSH_KEYFILE = None
+    SSH_PASSWORD = None
+    SSH_WORKDIR = ""

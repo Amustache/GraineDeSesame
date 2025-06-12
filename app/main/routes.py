@@ -2,7 +2,7 @@ import json
 
 from flask import render_template, request, redirect, url_for, session, current_app
 
-from app.main.utilities import hash_password
+from app.main.utilities import hash_password, ssh_hashcat_from_hashes
 from app.main import bp
 
 SCORES_TEXT = [
@@ -321,7 +321,7 @@ def explanation_3():
     speech_text = [
         "Cette suite de caractères ne permet pas de deviner le mot d'origine.",
         "Un mot comme <code>chat</code> se transforme en<br/><small><code>aa8af3ebe14831a7cd1b6d1383a03755</code></small><br/>par exemple !",
-        "Les <i>hashes</i> sont conçues pour être irréversibles.",
+        "Les <i>hashes</i> sont conçus pour être irréversibles.",
     ]
 
     illu_pic = "1way.png"
@@ -529,6 +529,14 @@ def crack_1():
     # Error
     return redirect(url_for("main.entry"))
 
+@bp.route("/get_results")
+def get_results():
+    try:
+        hashes = request.args.get("hashes").split(",")
+    except:
+        return {}
+
+    return ssh_hashcat_from_hashes(hashes)
 
 @bp.route("/crack_2", methods=("GET", "POST"))
 def crack_2():
