@@ -1,49 +1,19 @@
 import threading
 import json
 
-from flask import render_template, request, redirect, url_for, session, current_app
+from flask import render_template, request, redirect, url_for, session
 
-from app.main.utilities import hash_password, ssh_hashcat_from_hashes, ssh_send_command
+from app.main.utilities import hash_password, ssh_hashcat_from_hashes, ssh_send_command, SCORES_TEXT
 from app.main import bp
 
-SCORES_TEXT = [
-    "Risqué",
-    "Faible",
-    "Moyen",
-    "Fort",
-    "Excellent"
-]
+@bp.route("/get_results")
+def get_results():
+    try:
+        hashes = request.args.get("hashes").split(",")
+    except:
+        return {}
 
-
-@bp.route("/test", methods=("GET", "POST"))
-def test():
-    # Parameters
-    current_page = "test.html"
-    next_fun = "main.test"
-    chara_pic = "draft_neutral"
-    speech_text = [
-        "Bonjour ! Mon nom est Égide, et nous allons découvrir ensemble comment les mots de passes fonctionnent.",
-        "Autre texte",
-        "asdfdsaf texte",
-        "af dsf",
-        "Autre tdfdfexte",
-    ]
-
-    # Current page
-    if request.method == "GET":
-        return render_template(
-            current_page,
-            chara_pic=chara_pic,
-            speech_text=speech_text,
-        )
-    # Next page
-
-    if request.method == "POST":
-        return redirect(url_for(next_fun))
-
-    # Error
-    return redirect(url_for("main.entry"))
-
+    return ssh_hashcat_from_hashes(hashes)
 
 @bp.route("/", methods=("GET", "POST"))
 @bp.route("/entry", methods=("GET", "POST"))
@@ -108,8 +78,6 @@ def enter_password():
     speech_text = [
         "Bien ! Commençons !",
         "Je vous propose ici de me donner trois mots de passe, un faible, un moyen, un fort.",
-        # "Un mot de passe faible correspond à un mot de passe qui va facilement être découvert par de méchants pirates.",
-        # "Un mot de passe fort ne devrait pas pouvoir facilement être deviné par des personnes malicieuses.",
         "A vous de proposer des mots de passe qui semblent coller !"
     ]
 
@@ -417,7 +385,6 @@ def explanation_5():
     next_fun = "main.explanation_6"
     chara_pic = "draft_neutral"
     speech_text = [
-        # "Pour cette expérience, nous allons utiliser les algorithmes de hachage MD5 et bcrypt pour stocker les mots de passe.",
         "Pour cette expérience, nous allons utiliser l'algorithme de hachage MD5 - mais il en existe bien d'autres !",
     ]
 
@@ -562,15 +529,6 @@ def crack_1():
 
     # Error
     return redirect(url_for("main.entry"))
-
-@bp.route("/get_results")
-def get_results():
-    try:
-        hashes = request.args.get("hashes").split(",")
-    except:
-        return {}
-
-    return ssh_hashcat_from_hashes(hashes)
 
 @bp.route("/crack_2", methods=("GET", "POST"))
 def crack_2():

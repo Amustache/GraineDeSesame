@@ -7,8 +7,6 @@ import hashlib
 
 import paramiko
 from paramiko import SSHException
-from paramiko.buffered_pipe import PipeTimeout
-from flask import current_app
 
 COMMAND_SRUN = "srun -c 8 --mem 32G --partition gpu-l40 --reservation=password_day_test --gres gpu:2 --time 120 bash -c '{command}'"
 COMMAND_SQUEUE = "squeue -p gpu-l40 -u username -h"
@@ -174,3 +172,10 @@ if __name__ == "__main__":
     #     print(test["stderr"].read())
     # except TimeoutError:
     #     pass
+SCORES_TEXT = [
+    "Risqué",
+    "Faible",
+    "Moyen",
+    "Fort",
+    "Excellent"
+]
