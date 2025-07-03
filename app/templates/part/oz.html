@@ -9,12 +9,12 @@
   <div class="row">
     <div class="col-2"></div>
     <div class="col-8">
-      {% for md5_hashe in md5_hashes %}
-      <div id="{{ md5_hashe }}" class="row mb-3">
+      {% for md5_hash in md5_hashes %}
+      <div id="{{ md5_hash }}" class="row mb-3">
         <div class="input-group input-group-lg">
-          <span class="input-group-text" id="{{ md5_hashe }}_hash"><code>{{ md5_hashe or '(pas de hash)' }}</code></span>
-          <input id="{{ md5_hashe }}_plain" type="text" class="form-control" value="{{ '???' if md5_hashe else '' }}">
-          <span class="input-group-text" id="{{ md5_hashe }}_icon"><i class="bi bi-hourglass-bottom"></i></span>
+          <span class="input-group-text" id="{{ md5_hash }}_hash"><code>{{ md5_hash or '(pas de hash)' }}</code></span>
+          <input id="{{ md5_hash }}_plain" type="text" class="form-control" value="{{ '???' if md5_hash else '' }}">
+          <span class="input-group-text" id="{{ md5_hash }}_icon"><i class="bi bi-hourglass-bottom"></i></span>
         </div>
       </div>
     </div>
