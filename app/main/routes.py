@@ -6,6 +6,7 @@ from flask import render_template, request, redirect, url_for, session
 from app.main.utilities import hash_password, ssh_hashcat_from_hashes, ssh_send_command, SCORES_TEXT
 from app.main import bp
 
+
 @bp.route("/get_results")
 def get_results():
     try:
@@ -14,6 +15,7 @@ def get_results():
         return {}
 
     return ssh_hashcat_from_hashes(hashes)
+
 
 @bp.route("/", methods=("GET", "POST"))
 @bp.route("/entry", methods=("GET", "POST"))
@@ -91,40 +93,44 @@ def enter_password():
     # Next page
     if request.method == "POST":
         session.clear()
-        print(request.form)
+
+        session["passwords"] = list()
+
         # weak
         plain = request.form.get("weak")
         if plain and plain != "":
             md5_hash, bcrypt_hash = hash_password(plain)
-            session["weak"] = {
+            session["passwords"].append({
                 "plain": plain,
                 "score": int(request.form.get("score_weak")),
                 "md5_hash": md5_hash,
                 "bcrypt_hash": bcrypt_hash,
                 "time": json.loads(request.form.get("time_weak")),
-            }
+            })
+
         # medium
         plain = request.form.get("medium")
         if plain and plain != "":
             md5_hash, bcrypt_hash = hash_password(plain)
-            session["medium"] = {
+            session["passwords"].append({
                 "plain": plain,
                 "score": int(request.form.get("score_medium")),
                 "md5_hash": md5_hash,
                 "bcrypt_hash": bcrypt_hash,
                 "time": json.loads(request.form.get("time_medium")),
-            }
+            })
+
         # strong
         plain = request.form.get("strong")
         if plain and plain != "":
             md5_hash, bcrypt_hash = hash_password(plain)
-            session["strong"] = {
+            session["passwords"].append({
                 "plain": plain,
                 "score": int(request.form.get("score_strong")),
                 "md5_hash": md5_hash,
                 "bcrypt_hash": bcrypt_hash,
                 "time": json.loads(request.form.get("time_strong")),
-            }
+            })
 
         return redirect(url_for(next_fun))
 
@@ -142,12 +148,7 @@ def ack_password():
         "Nous allons pouvoir commencer l'expérience. Mais, nous n'allons pas stocker les mots de passe...",
     ]
 
-    pass_scores = [
-        session["weak"]["score"] if "weak" in session else -1,
-        session["medium"]["score"] if "medium" in session else -1,
-        session["strong"]["score"] if "strong" in session else -1,
-    ]
-    pass_scores = [s for s in pass_scores if s != -1]
+    pass_scores = [password["score"] for password in session["passwords"]]
     total_pass = len(pass_scores)
     pass_scores = sorted(set(pass_scores))
     diff_pass = len(pass_scores)
@@ -178,46 +179,25 @@ def ack_password():
             current_page,
             chara_pic=chara_pic,
             speech_text=speech_text,
-            weak={
-                "plain": session["weak"]["plain"],
-                "score": {
-                    "score_percentage": int(100 * (1 + session["weak"]["score"]) / 5),
-                    "score_message": SCORES_TEXT[session["weak"]["score"]],
-                },
-            } if "weak" in session else {"plain": "",
-                                         "score": {"score_percentage": 0, "score_message": SCORES_TEXT[0]}},
-            medium={
-                "plain": session["medium"]["plain"],
-                "score": {
-                    "score_percentage": int(100 * (1 + session["medium"]["score"]) / 5),
-                    "score_message": SCORES_TEXT[session["medium"]["score"]],
-                },
-            } if "medium" in session else {"plain": "",
-                                           "score": {"score_percentage": 0, "score_message": SCORES_TEXT[0]}},
-            strong={
-                "plain": session["strong"]["plain"],
-                "score": {
-                    "score_percentage": int(100 * (1 + session["strong"]["score"]) / 5),
-                    "score_message": SCORES_TEXT[session["strong"]["score"]],
-                },
-            } if "strong" in session else {"plain": "",
-                                           "score": {"score_percentage": 0, "score_message": SCORES_TEXT[0]}},
+            passwords=[
+                {
+                    "plain": password["plain"],
+                    "score": {
+                        "score_percentage": int(100 * (1 + password["score"]) / 5),
+                        "score_message": SCORES_TEXT[password["score"]],
+                    },
+                }
+                for password in session["passwords"]
+            ],
         )
     # Next page
     if request.method == "POST":
         if next_fun != "main.enter_password":  # Check that passwords
             # We deletin' just for the beauty of it...
-            hashes = list()
-            if "weak" in session:
-                del session["weak"]["plain"]
-                hashes.append(session["weak"]["md5_hash"])
-            if "medium" in session:
-                del session["medium"]["plain"]
-                hashes.append(session["medium"]["md5_hash"])
-            if "strong" in session:
-                del session["strong"]["plain"]
-                hashes.append(session["strong"]["md5_hash"])
-            hashes = '\n'.join(hashes)
+            hashes = [password["md5_hash"] for password in session["passwords"]]
+            hashes = "\n".join(hashes)
+            for password in session["passwords"]:
+                del password["plain"]
 
             # Send password for cracking
             command = fr"printf '{hashes}' > /users/username/hashcat_test/hashcat-6.2.6/current_hash"
@@ -519,9 +499,7 @@ def crack_1():
             current_page,
             chara_pic=chara_pic,
             speech_text=speech_text,
-            weak_md5=session["weak"]["md5_hash"] if "weak" in session else "",
-            medium_md5=session["medium"]["md5_hash"] if "medium" in session else "",
-            strong_md5=session["strong"]["md5_hash"] if "strong" in session else "",
+            md5_hashes=[password["md5_hash"] for password in session["passwords"]],
         )
     # Next page
     if request.method == "POST":
@@ -529,6 +507,7 @@ def crack_1():
 
     # Error
     return redirect(url_for("main.entry"))
+
 
 @bp.route("/crack_2", methods=("GET", "POST"))
 def crack_2():
@@ -551,9 +530,7 @@ def crack_2():
             current_page,
             chara_pic=chara_pic,
             speech_text=speech_text,
-            weak_md5=session["weak"]["md5_hash"] if "weak" in session else "",
-            medium_md5=session["medium"]["md5_hash"] if "medium" in session else "",
-            strong_md5=session["strong"]["md5_hash"] if "strong" in session else "",
+            md5_hashes=[password["md5_hash"] for password in session["passwords"]],
         )
     # Next page
     if request.method == "POST":
@@ -561,6 +538,7 @@ def crack_2():
 
     # Error
     return redirect(url_for("main.entry"))
+
 
 @bp.route("/results", methods=("GET", "POST"))
 def results():
@@ -585,6 +563,7 @@ def results():
 
     # Error
     return redirect(url_for("main.entry"))
+
 
 @bp.route("/advices", methods=("GET", "POST"))
 def advices():
